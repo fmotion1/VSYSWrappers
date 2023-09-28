@@ -1,0 +1,1 @@
+Start-Process rundll32.exe sysdm.cpl,EditEnvironmentVariables -Verb runAs
