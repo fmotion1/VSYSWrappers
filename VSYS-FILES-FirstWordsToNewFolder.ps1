@@ -11,14 +11,14 @@ param (
 $Files = Get-Content $FileList
 
 try {
-    Save-FontsToFolderByWord -Files $Files -NumWords $NumWords
+    Save-FilesToFolderByWord -Files $Files -NumWords $NumWords
 } catch {
     Remove-Item $FileList -Force
     $PSCmdlet.ThrowTerminatingError($PSItem)
 }
 
 $ToastM1	= 'Operation Complete'
-$ToastM2	= 'All fonts have been separated.'
+$ToastM2	= 'All files have been separated.'
 $ToastImage = "$PSScriptRoot\images\Toast\toast-font-general.png"
 $Builder = New-BTContentBuilder
 $Builder | Add-BTAppLogo -Source $ToastImage -Crop Circle -PassThru |

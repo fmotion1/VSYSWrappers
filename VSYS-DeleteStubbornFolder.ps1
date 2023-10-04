@@ -1,14 +1,14 @@
 param (
     [Parameter(Mandatory, Position=0)]
     [String]
-    $File
+    $Folder
 )
 
 
-$NewFilePath = "\\?\$File"
+$NewFilePath = "\\?\$Folder"
 
 $Params = @{
-    Message = "Are you sure you want to delete $($File)?"
+    Message = "Are you sure you want to delete $($Folder)?"
     Title = "Delete Confirmation"
     BoxType = "YesNoCancel"
     Icon = "Exclamation"
@@ -23,5 +23,4 @@ if($Result -ne "Yes"){ exit }
 # del /Q    Quiet mode, do not ask if ok to delete on global wildcard
 # del /A    Selects files to delete based on attributes
 
-
-& cmd /C del /F /Q $NewFilePath
+& cmd /C rd /Q /s $NewFilePath

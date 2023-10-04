@@ -17,8 +17,12 @@ if ($i.Count -ne 0) {
 }
 
 py -$Version -m venv $Folder | Out-Null
-
 & "Scripts/Activate.ps1" | Out-Null
+
+python -m pip install -U pip wheel setuptools
+python -m pip install --upgrade pip
+
+
 
 
 
