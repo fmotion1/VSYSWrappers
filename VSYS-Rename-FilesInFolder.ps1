@@ -12,7 +12,9 @@ param (
 $Folders = Get-Content $FileList
 
 try {
+    #Write-Host "`$Folders:" $Folders -ForegroundColor Green
     Rename-FilesInFolder -Folders $Folders -PresetName $PresetName
+
 } catch {
     Remove-Item $FileList -Force
     $ToastM1	= 'Operation Failed'

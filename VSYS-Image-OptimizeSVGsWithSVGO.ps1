@@ -2,13 +2,17 @@
 param (
     [Parameter(Mandatory)]
     [String]
-    $FileList
+    $FileList,
+
+    [Parameter(Mandatory=$false)]
+    [Switch]
+    $ForceRemoveComments
 )
 
 $Files = Get-Content $FileList
 
 try{
-    Optimize-SVGWithSVGO -Files $Files
+    Optimize-SVGWithSVGO -Files $Files -ForceRemoveComments:$ForceRemoveComments
 }
 catch {
     Remove-Item $FileList -Force

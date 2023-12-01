@@ -15,6 +15,7 @@ param (
 $Files = Get-Content $FileList
 
 try {
+    Write-Host "`$Versioned:" $Versioned -ForegroundColor Green
     Save-FontsToVersionedFolder -Files $Files -WFR:$WFR -Versioned:$Versioned -MaxThreads 8
 
 } catch {

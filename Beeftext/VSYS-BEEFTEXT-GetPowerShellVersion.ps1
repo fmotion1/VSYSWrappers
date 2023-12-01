@@ -1,0 +1,1 @@
+﻿"Powershell $($PSVersionTable.PSVersion) $($PSVersionTable.PSEdition)"

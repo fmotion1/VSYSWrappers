@@ -10,8 +10,7 @@ param (
 
 $Files = Get-Content $FileList
 
-# $Files | Convert-SVGtoICO -HonorSub16pxSizes -MaxThreads 32
-Convert-SVGtoICO -Files $Files -HonorSub16pxSizes -MaxThreads 32
+Convert-SVGtoICO -Files $Files -HonorSub16pxSizes -MaxThreads 14
 
 Remove-Item $FileList -Force
 

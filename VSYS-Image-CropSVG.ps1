@@ -18,7 +18,7 @@ param (
 
     [Parameter(Mandatory=$false)]
     [Int32]
-    $MaxThreads = 16
+    $MaxThreads = 32
 )
 
 $Files = Get-Content $FileList

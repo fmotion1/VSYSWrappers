@@ -5,16 +5,20 @@ param (
 
     [Parameter(Mandatory=$false)]
     [Switch]
+    $Versioned,
+
+    [Parameter(Mandatory=$false)]
+    [Switch]
     $WFR
 )
 
 $Folders = Get-Content $FileList
 
 try {
-    Save-FontsToVersionedFolderMulti -Folders $Folders -MaxThreads 8 -WFR:$WFR
+    Save-FontsToVersionedFolderMulti -Folders $Folders -Versioned:$Versioned -WFR:$WFR -MaxThreads 8 
 } catch {
     Remove-Item $FileList -Force
-    throw
+    $PSCmdlet.ThrowTerminatingError($PSItem)
 }
 
 Remove-Item $FileList -Force

@@ -6,8 +6,8 @@ param (
 
 $Files = Get-Content $FileList
 
-# $Files | Rename-FontToActualName
-Rename-FontToActualName -Files $Files
+
+Rename-FontsToActualName -Files $Files
 
 Start-Sleep -Milliseconds 10
 $wshell = New-Object -ComObject wscript.shell;

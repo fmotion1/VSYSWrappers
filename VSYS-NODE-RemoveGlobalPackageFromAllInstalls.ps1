@@ -1,71 +1,45 @@
-function Uninstall-GlobalPackages {
-    param(
-        [Parameter(Mandatory)]
-        [String]
-        $Version,
+Clear-Host
 
-        [Parameter(Mandatory,ValueFromRemainingArguments)]
-        [String[]]
-        $Packages
-    )
+$NPMString = Invoke-SpectreTextPrompt -Prompt "Please type the name of the package(s) you want to uninstall gloablly:"
+$Packages = ($NPMString.Trim()).Split(" ")
+$NumPackages = $Packages.Count
 
-    & nvm use $Version
-    $cmd = Get-Command npm.cmd
-    & $cmd uninstall -g $Packages.Trim()
-}
-
-$MultiplePackages = $false
-
-$NPMString = Invoke-SpectreTextPrompt -Prompt "Please type the name of the package(s) you want to gloablly uninstall:" -ClearScreenBeforeDisplay
-$Packages = $NPMString.Split(" ")
-if($Packages.Count -gt 1){
-    $MultiplePackages = $true
-}
+$Multiple = ($NumPackages -gt 1) ? $true : $false
 
 foreach ($Package in $Packages) {
-
-    $NPMURL = "https://registry.npmjs.org/" + $Package
-
-    try {
-        $APIResults = Invoke-RestMethod $NPMURL
-    } catch {
-        $StatusCode = $_.Exception.Response.StatusCode.value__
-    }
-    # Write-Host "`$APIResults:" $APIResults -ForegroundColor Green
-    if($StatusCode -eq '404'){
-        Read-Host "Package $NPMString does not exist on npm.js. Press any key to exit."
-        exit
+    if(-not(Confirm-NPMPackageExists $Package)){
+        Write-Error "The package $Package does not exist in the NPMjs registry. Aborting."
+        return
     }
 }
 
-$PCount = $Packages.Count
-$PStr = $Packages -join ", "
+$PackageList = $Packages -join ", "
 
-if($MultiplePackages){
-
-    $Prompt = "Are you sure you want to uninstall $PCount packages ([white]$PStr[/]) globally for all Node versions?"
-    $Success = "`nUninstalling the packages ([white]$PStr[/]) now.`n"
-    $Instruction = "[grey66][WHITE]$PStr[/] will be uninstalled in the following node versions:`n`n[/]"
-
+if($Multiple){
+    $Instruction = "[grey66]The packages [WHITE]$PackageList[/] will be uninstalled in the following node versions:`n`n[/]"
+    $Prompt = "Are you sure you want to uninstall the $NumPackages packages [white]$PackageList[/] globally from all Node versions?"
+    $Success = "`nUninstalling the packages [white]$PackageList[/] now.`n"
+    
 } else {
-
-    $Prompt = "Are you sure you want to uninstall package ([white]$PStr[/]) globally for all Node versions?"
-    $Success = "`nnUninstalling package ([white]$PStr[/]) now.`n"
-    $Instruction = "[grey66][WHITE]$PStr[/] will be uninstalled in the following node versions:`n`n[/]"
+    $Instruction = "[grey66]The package [WHITE]$PackageList[/] will be uninstalled in the following node versions:`n`n[/]"
+    $Prompt = "Are you sure you want to uninstall the package [white]$PackageList[/] globally from all Node versions?"
+    $Success = "`nUninstalling package [white]$PackageList[/] now.`n"
 }
 
-$NodeVersions = Get-NVMAllNodeVersions
-
-foreach ($NodeVersion in $NodeVersions) {
-    $Instruction = $Instruction + '> ' + $NodeVersion + "`n"
+$NodeVersions = Get-InstalledNodeVersionsWithNVM -VersionOnly -InsertLeadingV -Branch CURRENT
+foreach ($Version in $NodeVersions) {
+    $Instruction = $Instruction + '> ' + $Version + "`n"
 }
 
-$Result = Invoke-SpectreTextPromptConfirm -Prompt $Prompt -ConfirmSuccess $Success -PreInstruction $Instruction
+Write-SpectreHost $Instruction
+$Result = Invoke-SpectreTextPromptConfirm -Prompt $Prompt -ConfirmSuccess $Success
 if($Result -ne "Y"){
     exit
 }
 
 foreach ($NodeVersion in $NodeVersions) {
-    Uninstall-GlobalPackages -Version $NodeVersion -Packages $Packages
+    Uninstall-NodeGlobalPackages -Version $NodeVersion -Packages $Packages
 }
+
+
 

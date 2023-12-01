@@ -1,21 +1,24 @@
 param (
-    [Parameter(Mandatory,Position=0)]
+    [Parameter(Mandatory)]
     [String]
     $FileList
 )
 
 $Files = Get-Content $FileList
 
-# $Files | Convert-FontToSVG
-Convert-FontToSVG -Files $Files
+try {
+    Save-FontsToFolderByWord -Files $Files -WholeName
+} catch {
+    Remove-Item $FileList -Force
+    $PSCmdlet.ThrowTerminatingError($PSItem)
+}
 
-Remove-Item $FileList -Force
-
-$ToastM1	= 'SVG Conversion Complete.'
-$ToastM2	= 'All files have been successfully converted.'
+$ToastM1	= 'Operation Complete'
+$ToastM2	= 'All fonts have been separated.'
 $ToastImage = "$PSScriptRoot\images\Toast\toast-font-general.png"
 $Builder = New-BTContentBuilder
 $Builder | Add-BTAppLogo -Source $ToastImage -Crop Circle -PassThru |
            Add-BTText -Text $ToastM1 -PassThru |
            Add-BTText -Text $ToastM2
 $Builder | Show-BTNotification
+

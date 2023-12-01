@@ -9,7 +9,7 @@ param (
 )
 
 begin {
-    & "D:\Dev\Python\00 VENV\FontFoundryTools\Scripts\Activate.ps1"
+    & "D:\Dev\Python\00 VENV\FontTools\Scripts\Activate.ps1"
 }
 
 process{
@@ -32,13 +32,11 @@ process{
         }
     }
 
-    #Write-Host "`$Tolerance:" $Tolerance -ForegroundColor Green
-
     $Files = Get-Content $FileList
     $Files | ForEach-Object -Parallel {
 
         $File = $_
-        $cmd = Get-Command "D:\Dev\Python\00 VENV\FontFoundryTools\Scripts\ftcli.exe"
+        $cmd = Get-Command "D:\Dev\Python\00 VENV\FontTools\Scripts\ftcli.exe"
         & $cmd converter ttf2otf -t $Using:DecimalValue --no-overwrite $File
 
     } -ThrottleLimit $MaxThreads

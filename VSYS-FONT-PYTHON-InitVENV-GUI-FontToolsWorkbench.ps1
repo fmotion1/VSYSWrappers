@@ -5,7 +5,7 @@ param (
 
     [Parameter(Mandatory=$false)]
     [String]
-    $Version='3.11'
+    $Version='3.10'
 )
 
 Set-Location -LiteralPath $Folder
@@ -20,23 +20,9 @@ py -$Version -m venv $Folder | Out-Null
 
 & "Scripts/Activate.ps1" | Out-Null
 
-pip install brotli
-pip install skia-pathops
-pip install PyQt5
-pip install reportlab
-pip install freetype-py
-pip install fonttools[ufo,lxml,woff,unicode,pathops]
-pip install font-cli
-pip install numpy
-pip install fs
-pip install unicodedata2
-pip install scipy
-pip install uharfbuzz
-pip install opentypesvg
-pip install fontmeta
-pip install python-fontbro
-pip install fonttoolsWB
+python.exe -m pip install --upgrade pip
 
+python -m pip install fonttoolsWB
 
 
 

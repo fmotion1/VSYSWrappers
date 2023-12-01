@@ -1,75 +1,44 @@
-function Install-GlobalPackages {
-    param(
-        [Parameter(Mandatory)]
-        [String]
-        $Version,
+Clear-Host
 
-        [Parameter(Mandatory,ValueFromRemainingArguments)]
-        [String[]]
-        $Packages
-    )
+$NPMString = Invoke-SpectreTextPrompt -Prompt "Please type the name of the package(s) you want to install gloablly:"
+$Packages = ($NPMString.Trim()).Split(" ")
+$NumPackages = $Packages.Count
 
-    & nvm use $Version
-    $cmd = Get-Command npm.cmd
-    & $cmd install -g $Packages.Trim()
-}
-
-$MultiplePackages = $false
-
-[System.String]$NPMString = Invoke-SpectreTextPrompt -Prompt "Please type the name of the package(s) you want to install gloablly:" -ClearScreenBeforeDisplay
-$Packages = $NPMString.Split(" ")
-if($Packages.Count -gt 1){
-    $MultiplePackages = $true
-}
+$Multiple = ($NumPackages -gt 1) ? $true : $false
 
 foreach ($Package in $Packages) {
-
-    $NPMURL = "https://registry.npmjs.org/" + $Package
-
-    try {
-        $APIResults = Invoke-RestMethod $NPMURL
-    } catch {
-        $StatusCode = $_.Exception.Response.StatusCode.value__
-    }
-    # Write-Host "`$APIResults:" $APIResults -ForegroundColor Green
-    if($StatusCode -eq '404'){
-        Read-Host "Package $NPMString does not exist on npm.js. Press any key to exit."
-        exit
+    if(-not(Confirm-NPMPackageExistsInRegistry $Package)){
+        Write-Error "The package $Package does not exist in the NPMjs registry. Aborting."
+        return
     }
 }
 
+$PackageList = $Packages -join ", "
 
-$PCount = $Packages.Count
-$PStr = $Packages -join ", "
-
-if($MultiplePackages){
-
-    $Prompt = "Are you sure you want to install the $PCount packages [white]$PStr[/] globally to all Node versions?"
-    $Success = "`nInstalling the packages [white]$PStr[/] now.`n"
-    $Instruction = "[grey66]The packages [WHITE]$PStr[/] will be installed in the following node versions:`n`n[/]"
-
+if($Multiple){
+    $Instruction = "[grey66]The packages [WHITE]$PackageList[/] will be installed in the following node versions:`n`n[/]"
+    $Prompt = "Are you sure you want to install the $NumPackages packages [white]$PackageList[/] globally to all Node versions?"
+    $Success = "`nInstalling the packages [white]$PackageList[/] now.`n"
+    
 } else {
-
-    $Prompt = "Are you sure you want to install the package [white]$PStr[/] globally to all Node versions?"
-    $Success = "`nInstalling package [white]$PStr[/] now.`n"
-    $Instruction = "[grey66]The package [WHITE]$PStr[/] will be installed in the following node versions:`n`n[/]"
+    $Instruction = "[grey66]The package [WHITE]$PackageList[/] will be installed in the following node versions:`n`n[/]"
+    $Prompt = "Are you sure you want to install the package [white]$PackageList[/] globally to all Node versions?"
+    $Success = "`nInstalling package [white]$PackageList[/] now.`n"
 }
 
-$NodeVersions = Get-NVMAllNodeVersions
-
-foreach ($NodeVersion in $NodeVersions) {
-    $Instruction = $Instruction + '> ' + $NodeVersion + "`n"
+$NodeVersions = Get-InstalledNodeVersionsWithNVM -VersionOnly -Branch CURRENT
+foreach ($Version in $NodeVersions) {
+    $Instruction = $Instruction + '> ' + "v$Version" + "`n"
 }
 
-$Result = Invoke-SpectreTextPromptConfirm -Prompt $Prompt -ConfirmSuccess $Success -PreInstruction $Instruction
+Write-SpectreHost $Instruction
+$Result = Read-SpectreConfirm -Prompt $Prompt -ConfirmSuccess $Success
 if($Result -ne "Y"){
     exit
 }
 
 foreach ($NodeVersion in $NodeVersions) {
-
-    Install-GlobalPackages -Version $NodeVersion -Packages $Packages
-
+    Install-NodeGlobalPackages -Version $NodeVersion -Packages $Packages
 }
 
 

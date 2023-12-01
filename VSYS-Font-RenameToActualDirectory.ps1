@@ -11,7 +11,7 @@ param (
 $Files = Get-Content $FileList
 
 try {
-    Rename-FontToActualNameDirectory -Directories $Files -Recurse:$Recurse
+    Rename-FontsToActualNameDirectory -Directories $Files -Recurse:$Recurse
 } catch {
     Remove-Item $FileList -Force
     throw
