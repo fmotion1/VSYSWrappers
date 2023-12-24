@@ -27,7 +27,7 @@ Remove-Item $FileList -Force
 
 $ToastM1	= 'Operation Complete'
 $ToastM2	= 'All fonts have been separated.'
-$ToastImage = "$PSScriptRoot\images\Toast\toast-font-general.png"
+$ToastImage = "D:\Dev\Powershell\VSYSWrappers\00 Toast\toast-font-general.png"
 $Builder = New-BTContentBuilder
 $Builder | Add-BTAppLogo -Source $ToastImage -Crop Circle -PassThru |
            Add-BTText -Text $ToastM1 -PassThru |

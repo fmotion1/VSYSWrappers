@@ -59,7 +59,7 @@ Remove-Item $FileList -Force
 
 $ToastM1	= 'Font Renaming Complete.'
 $ToastM2	= 'All files have been successfully renamed.'
-$ToastImage = "$PSScriptRoot\images\Toast\toast-font-general.png"
+$ToastImage = "D:\Dev\Powershell\VSYSWrappers\00 Toast\toast-font-general.png"
 $Builder = New-BTContentBuilder
 $Builder | Add-BTAppLogo -Source $ToastImage -Crop Circle -PassThru |
            Add-BTText -Text $ToastM1 -PassThru |

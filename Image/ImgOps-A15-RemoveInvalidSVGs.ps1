@@ -29,7 +29,7 @@ $Files | ForEach-Object -Parallel {
 
 $ToastM1	= 'Operation Complete'
 $ToastM2	= 'All invalid SVG files have been deleted.'
-$ToastImage = "$PSScriptRoot\images\Toast\toast-trash.png"
+$ToastImage = "D:\Dev\Powershell\VSYSWrappers\00 Toast\toast-trash.png"
 $Builder = New-BTContentBuilder
 $Builder | Add-BTAppLogo -Source $ToastImage -Crop Circle -PassThru |
            Add-BTText -Text $ToastM1 -PassThru |
