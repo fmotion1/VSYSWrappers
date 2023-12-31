@@ -1,52 +1,27 @@
 param (
     [Parameter(Mandatory)]
-    [String[]]
-    $FileList,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $FilenamesOnly,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $NoQuotes,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $NoExtension
+    [String[]]$FileList,
+    [Switch] $FilenamesOnly,
+    [Switch] $NoQuotes,
+    [Switch] $NoExtension,
+    [Switch] $AsArray
+    
 )
 
 $Path = Get-Content $FileList
+Remove-Item $FileList -Force
 
-if(!$NoExtension){
-    if($FilenamesOnly){
-        if($NoQuotes){
-            Copy-PathToClipboard -Path $Path -FilenamesOnly -NoQuotes
-        }else{
-            Copy-PathToClipboard -Path $Path -FilenamesOnly
-        }
-    }else{
-        if($NoQuotes){
-            Copy-PathToClipboard -Path $Path -NoQuotes
-        }else{
-            Copy-PathToClipboard -Path $Path
-        }
-    }
-}else{
-    if($FilenamesOnly){
-        if($NoQuotes){
-            Copy-PathToClipboard -Path $Path -FilenamesOnly -NoQuotes -NoExtension
-        }else{
-            Copy-PathToClipboard -Path $Path -FilenamesOnly -NoExtension
-        }
-    }else{
-        if($NoQuotes){
-            Copy-PathToClipboard -Path $Path -NoQuotes -NoExtension
-        }else{
-            Copy-PathToClipboard -Path $Path -NoExtension
-        }
-    }
+if ($AsArray -and $NoQuotes) {
+    throw "The AsArray and NoQuotes switches cannot be used together."
 }
 
+$params = @{
+    Path = $Path
+    FilenamesOnly = $FilenamesOnly -and $FilenamesOnly
+    NoQuotes = $NoQuotes -and $NoQuotes
+    NoExtension = $NoExtension -and $NoExtension
+    AsArray = $AsArray -and $AsArray
+}
 
-Remove-Item $FileList -Force
+Copy-PathToClipboard @params
+

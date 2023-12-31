@@ -1,1 +1,2 @@
-﻿"Powershell $($PSVersionTable.PSVersion) $($PSVersionTable.PSEdition)"
+﻿& pwsh -noprofile {Write-Host "Powershell $($PSVersionTable.PSVersion) $($PSVersionTable.PSEdition)"}
+

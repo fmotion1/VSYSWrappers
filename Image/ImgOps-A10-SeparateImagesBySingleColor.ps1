@@ -8,32 +8,26 @@ $Files = Get-Content $FileList
 
 
 # Dialog Splat
-$DialogVars = @{
-    MainInstruction = "Specify HTML HEX Color"
-    MainContent = "Please input a valid color in HTML Hex format."
+$invokeOokiiInputDialogSplat = @{
+    MainInstruction = "Specify a HEX Color"
+    MainContent = "Please input a HEX formatted color code."
     WindowTitle = "Input Color"
-    InputText = "#179CE1"
+    InputText = "#FFFFFF"
     MaxLength = 7
 }
 
-# Collect the color to sort by.
-[array]$DialogResponse = Invoke-OokiiInputDialog @DialogVars
-$UserColor = $DialogResponse[1]
-if(!$UserColor) { exit }
-Write-Host "`$UserColor:" $UserColor -ForegroundColor Green
-while ($UserColor -inotmatch '^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$') {
-    if(!$UserColor) { break; exit }
-    [array]$DialogResponse = Invoke-OokiiInputDialog @DialogVars
-    $UserColor = $DialogResponse[1]
+
+$DialogResponse = Invoke-OokiiInputDialog @invokeOokiiInputDialogSplat
+$ChosenColor = $DialogResponse[0]
+while ($ChosenColor -inotmatch '^#([0-9a-f]{3}|[0-9a-f]{6})$') {
+    $DialogResponse = Invoke-OokiiInputDialog @invokeOokiiInputDialogSplat
+    $ChosenColor = $DialogResponse[0]
+}
+if(!$ChosenColor){
+    return
 }
 
-# If the user omitted the # sign, add it.
-if($UserColor -notmatch "#"){ $UserColor = "#$UserColor" }
-
-
-Write-Host "`$UserColor:" $UserColor -ForegroundColor Green
-
-Group-ImagesBySingleColor -Files $Files -HexColor $UserColor
+Group-ImagesBySingleColor -Files $Files -HexColor $ChosenColor
 
 Remove-Item $FileList -Force
 

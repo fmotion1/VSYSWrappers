@@ -6,7 +6,7 @@ param (
 
 $Files = Get-Content $FileList
 
-Group-SortSVGsBySizeWidthHeight -Files $Files
+Group-SortSVGsByWidthHeightOnly -Files $Files
 
 Remove-Item $FileList -Force
 

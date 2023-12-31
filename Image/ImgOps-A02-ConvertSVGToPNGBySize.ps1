@@ -1,11 +1,6 @@
 param (
     [Parameter(Mandatory)]
-    [String]
-    $FileList,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $OverwriteFiles
+    [String] $FileList
 )
 
 $Files = Get-Content $FileList
@@ -28,10 +23,10 @@ while ($SizeList -inotmatch '[0-9]+(,[0-9]+)*') {
 $SizeArr = $SizeList.Split(",")
 
 try {
-    Convert-SVGToPNGBySize -Files $Files -Sizes $SizeArr -OverwriteFiles:$OverwriteFiles
+    Convert-SVGToPNGBySize -Files $Files -Sizes $SizeArr
 } catch {
     Remove-Item $FileList -Force
-    throw
+    throw "Error calling Convert-SVGToPNGBySize"
 }
 
 Remove-Item $FileList -Force

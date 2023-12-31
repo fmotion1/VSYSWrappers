@@ -6,3 +6,5 @@ $Version = $JSONObj.version
 $Date = $JSONObj.date
 $FinalStr = "VS Code v$($Version) ($Date)`nCommit:$Commit"
 $FinalStr
+
+
