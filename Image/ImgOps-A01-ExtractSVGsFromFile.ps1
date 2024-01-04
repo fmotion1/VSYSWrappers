@@ -1,18 +1,19 @@
 param (
-    [Parameter(Mandatory,Position = 0)]
-    [String]
-    $File,
-
-    [Parameter(Mandatory = $false, Position = 1)]
-    [String]
-    $Destination
+    [Parameter(Mandatory,Position=0)]
+    [String] $FileList
 )
 
-if(!$Destination){
-    $Destination = [System.IO.Path]::GetDirectoryName($File)
+$Files = (Get-Content $FileList) -as [Array]
+
+try {
+    Get-EmbeddedSVGsFromFile -TargetFiles $Files
+}
+catch {
+    Remove-Item $FileList -Force
+    throw
 }
 
-Get-SVGsFromFile -Source $File -Destination $Destination
+Remove-Item $FileList -Force
 
 $ToastM1	= 'Operation Complete'
 $ToastM2	= 'All SVGs have been successfully extracted.'

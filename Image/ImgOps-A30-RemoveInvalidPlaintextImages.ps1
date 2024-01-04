@@ -1,32 +1,24 @@
-param (
+﻿param (
     [Parameter(Mandatory)]
-    [Alias("f")]
-    [String]
-    $FileList,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $RenameOutput,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $PlaceInSubfolder,
-
-    [Parameter(Mandatory=$false)]
-    [Int32]
-    $MaxThreads = 16
+    [String] $FileList,
+    [double] $Threshold = 0.005,
+    [Int32] $MaxThreads = 16,
+    [ValidateSet('All','png','jpg','jpeg','gif','bmp','webp','tif','tiff','svg', IgnoreCase = $true)]
+    [String] $Filter = 'All'
 )
 
-$Files = Get-Content $FileList
+$Images = Get-Content $FileList
 
 try {
 
-    $SVGCropSplat = @{
-        Files                = $Files
-        RenameOutput         = $RenameOutput
-        PlaceInSubfolder     = $PlaceInSubfolder
+    $removeInvalidPlainTextImagesSplat = @{
+        Files      = $Images
+        Threshold  = $Threshold
+        Filter     = $Filter
+        MaxThreads = $MaxThreads
     }
-    Convert-CropSVGUsingInkscape @SVGCropSplat
+
+    Remove-InvalidPlainTextImages @removeInvalidPlainTextImagesSplat
 
 } catch {
     Remove-Item $FileList -Force
