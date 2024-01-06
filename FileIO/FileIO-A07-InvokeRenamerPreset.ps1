@@ -1,26 +1,26 @@
 param (
     [Parameter(Mandatory,ValueFromPipeline)]
-    [String]
-    $FileList,
-
+    [String] $FileList,
     [Parameter(Mandatory)]
-    [String]
-    $PresetName,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $UI
+    [String] $PresetName,
+    [Switch] $UI,
+    [Int32] $ThrottleLimit = 16
 )
 
-if($UI) { $Mode = "/preset" } else { $Mode = "/rename" }
-$Params = $Mode, $PresetName, "/list", $FileList
+### TODO: Split FileList into batches of 1000 and process in parallel.
 
 try {
-    $CMD = Get-Command "C:\Program Files (x86)\ReNamer\ReNamer.exe"
-    & $CMD $Params | Out-Null
+    $CmdRenamer = Get-Command 'C:\Program Files (x86)\ReNamer\ReNamer.exe' -ErrorAction Stop
 } catch {
-    throw
+    Remove-Item $FileList -Force
+    Write-Error "Can't find Renamer."
+    throw $_
 }
+
+
+$Mode = ($UI) ? "/preset" : "/rename"
+$Params = $Mode, $PresetName, "/list", $FileList
+& $CmdRenamer $Params | Out-Null
 
 Remove-Item $FileList -Force
 

@@ -1,14 +1,21 @@
 param (
     [Parameter(Mandatory,Position=0)]
-    [String]
-    $FileList
+    [String] $FileList,
+    [Switch] $ProcessFolderContents,
+    [Int32] $MaxThreads = 16
 )
 
 $Files = Get-Content $FileList
 
 try {
-    Rename-SeparatePascalCase -Files $Files
+    $renameSeparatePascalCaseSplat = @{
+        Files = $Files
+        ProcessFolderContents = $ProcessFolderContents
+        MaxThreads = $MaxThreads
+    }
+    Rename-SeparatePascalCase @renameSeparatePascalCaseSplat
 }catch {
+    Remove-Item $FileList -Force
     throw
 }
 
