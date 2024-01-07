@@ -1,24 +1,25 @@
-
 param (
     [Parameter(Mandatory)]
-    [String]
-    $FileList,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $ForceRemoveComments
+    [String] $FileList,
+    [Int32] $MaxThreads = 24
 )
 
 $Folders = Get-Content $FileList
 
+$optimizeSVGWithSVGOInDirectorySplat = @{
+    Folders = $Folders
+    MaxThreads = $MaxThreads
+    ErrorAction = 'Stop'
+}
+
 try {
-    Optimize-SVGWithSVGOInDirectory -Folders $Folders -ForceRemoveComments:$ForceRemoveComments
+    Optimize-SVGWithSVGOInDirectory @optimizeSVGWithSVGOInDirectorySplat
 }
 catch {
     Remove-Item $FileList -Force
-    throw
+    Write-Error "An error occured."
+    throw $_
 }
-
 
 Remove-Item $FileList -Force
 

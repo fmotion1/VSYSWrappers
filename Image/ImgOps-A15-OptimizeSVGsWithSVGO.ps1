@@ -1,22 +1,18 @@
-
 param (
     [Parameter(Mandatory)]
-    [String]
-    $FileList,
-
-    [Parameter(Mandatory=$false)]
-    [Switch]
-    $ForceRemoveComments
+    [String] $FileList,
+    [Int32] $MaxThreads = 16
 )
 
 $Files = Get-Content $FileList
 
-try{
-    Optimize-SVGWithSVGO -Files $Files -ForceRemoveComments:$ForceRemoveComments
+try {
+    Optimize-SVGWithSVGO -Files $Files -ErrorAction Stop
 }
 catch {
     Remove-Item $FileList -Force
-    throw
+    Write-Error "An error occured."
+    throw $_
 }
 
 Remove-Item $FileList -Force

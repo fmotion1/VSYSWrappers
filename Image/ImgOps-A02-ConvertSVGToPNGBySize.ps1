@@ -26,7 +26,8 @@ try {
     Convert-SVGToPNGBySize -Files $Files -Sizes $SizeArr
 } catch {
     Remove-Item $FileList -Force
-    throw "Error calling Convert-SVGToPNGBySize"
+    Write-Error "An error occured calling Convert-SVGToPNGBySize."
+    throw $_
 }
 
 Remove-Item $FileList -Force
