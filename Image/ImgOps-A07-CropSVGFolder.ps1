@@ -9,15 +9,15 @@ param (
 $Files = Get-Content $FileList
 
 try {
-
-    $convertCropSVGInkscapeSplat = @{
-        Files = $Files
+    
+    $convertCropSVGInkscapeFolderSplat = @{
+        LiteralPath = $Files
         RenameOutput = $RenameOutput
         PlaceInSubfolder = $PlaceInSubfolder
         MaxThreads = $MaxThreads
     }
 
-    Convert-CropSVGInkscape @convertCropSVGInkscapeSplat
+    Convert-CropSVGInkscapeFolder @convertCropSVGInkscapeFolderSplat
 
 } catch {
     Remove-Item $FileList -Force

@@ -5,15 +5,14 @@ param (
     [Int32] $MaxThreads = 16
 )
 
-$Files = Get-Content $FileList
+$Folders = Get-Content $FileList
 
-$convertSVGtoICOSplat = @{
-    Files = $Files
+$convertSVGsInFolderToICOSplat = @{
+    Folders = $Folders
     HonorSub16pxSizes = $HonorSub16pxSizes
     MaxThreads = $MaxThreads
 }
-
-Convert-SVGtoICO @convertSVGtoICOSplat
+Convert-SVGtoICOFolder @convertSVGsInFolderToICOSplat
 
 Remove-Item $FileList -Force
 
